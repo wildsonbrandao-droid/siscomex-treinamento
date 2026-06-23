@@ -6,7 +6,7 @@
 
 ## 🔵 Acesso rápido
 
-**[▶ Abrir o simulador](https://[seu-usuario].github.io/siscomex-treinamento/)**
+**[▶ Abrir o simulador](https://wildsonbrandao.github.io/siscomex-treinamento/)**
 
 ---
 
