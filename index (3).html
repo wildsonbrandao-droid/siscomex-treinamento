@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SISCOMEX Treinamento — UFCAT / Administração</title>
+<meta name="description" content="Simulador didático de Declaração de Importação (DI) no SISCOMEX. Disciplina de Comércio Exterior — UFCAT."/>
+<meta property="og:title" content="SISCOMEX Treinamento — UFCAT"/>
+<meta property="og:description" content="Simule o preenchimento de uma DI real: NCM, tributos, canais de parametrização e muito mais."/>
+<meta property="og:type" content="website"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔵</text></svg>"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#071D41;
+  --blue:#1351B4;
+  --blue-mid:#1E6FD9;
+  --blue-light:#E6F2FB;
+  --green:#168821;
+  --green-light:#E8F5E9;
+  --yellow:#FFBC00;
+  --red:#E52207;
+  --gray:#F4F6FA;
+  --border:#D0DCF0;
+  --text:#1A2540;
+  --muted:#6B7A99;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:#fff;color:var(--text);line-height:1.6}
+
+/* ── GOV BARS ── */
+.gov-strip{background:var(--navy);color:rgba(255,255,255,.75);font-size:11.5px;padding:6px 24px;display:flex;align-items:center;gap:10px}
+.gov-strip svg{opacity:.9}
+.gov-bar{background:var(--blue);color:#fff;font-size:11px;padding:5px 24px;display:flex;justify-content:space-between}
+.gov-bar span{opacity:.8}
+.env-pill{background:var(--yellow);color:#333;font-size:9px;font-weight:800;padding:2px 7px;border-radius:20px;letter-spacing:.6px}
+
+/* ── NAV ── */
+nav{background:#fff;border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(7,29,65,.06)}
+.nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.nav-brand .mono{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:500;color:var(--blue);background:var(--blue-light);padding:3px 9px;border-radius:4px;letter-spacing:.5px}
+.nav-brand span{font-size:13px;color:var(--muted);font-weight:500}
+.nav-cta{background:var(--blue);color:#fff;text-decoration:none;padding:7px 18px;border-radius:5px;font-size:13px;font-weight:700;transition:.15s;letter-spacing:.2px}
+.nav-cta:hover{background:#0D3C8A}
+
+/* ── HERO ── */
+.hero{background:linear-gradient(145deg, var(--navy) 0%, #0D3270 55%, #1351B4 100%);color:#fff;padding:72px 24px 80px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;margin-bottom:22px;color:rgba(255,255,255,.85)}
+.hero h1{font-size:clamp(28px,5vw,52px);font-weight:800;line-height:1.15;max-width:700px;margin:0 auto 16px;letter-spacing:-.5px}
+.hero h1 em{font-style:normal;color:var(--yellow)}
+.hero-sub{font-size:16px;color:rgba(255,255,255,.7);max-width:520px;margin:0 auto 36px;font-weight:400;line-height:1.7}
+.hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-hero{display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:6px;font-size:15px;font-weight:700;text-decoration:none;transition:.15s;letter-spacing:.2px}
+.btn-hero-primary{background:var(--yellow);color:var(--navy)}
+.btn-hero-primary:hover{background:#e5a800;transform:translateY(-1px)}
+.btn-hero-secondary{background:rgba(255,255,255,.12);color:#fff;border:1.5px solid rgba(255,255,255,.3)}
+.btn-hero-secondary:hover{background:rgba(255,255,255,.2)}
+.hero-badges{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:40px;padding-top:36px;border-top:1px solid rgba(255,255,255,.1)}
+.hero-badge{font-size:12px;color:rgba(255,255,255,.65);display:flex;align-items:center;gap:6px}
+.hero-badge strong{color:#fff}
+
+/* ── STATS ── */
+.stats{background:var(--blue);color:#fff;padding:0 24px}
+.stats-inner{max-width:900px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);border-left:1px solid rgba(255,255,255,.1)}
+.stat{padding:28px 24px;border-right:1px solid rgba(255,255,255,.1);text-align:center}
+.stat-num{font-size:32px;font-weight:800;font-family:'JetBrains Mono',monospace;letter-spacing:-1px;color:var(--yellow)}
+.stat-lbl{font-size:11px;color:rgba(255,255,255,.65);margin-top:4px;text-transform:uppercase;letter-spacing:.5px;line-height:1.4}
+
+/* ── SECTIONS ── */
+section{padding:64px 24px}
+.section-inner{max-width:900px;margin:0 auto}
+.eyebrow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--blue);margin-bottom:10px}
+.section-title{font-size:clamp(22px,3vw,32px);font-weight:800;color:var(--navy);margin-bottom:10px;line-height:1.2;letter-spacing:-.3px}
+.section-sub{font-size:15px;color:var(--muted);max-width:560px;line-height:1.7}
+
+/* ── ABAS GRID ── */
+.abas-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:36px}
+.aba-card{background:var(--gray);border:1px solid var(--border);border-radius:8px;padding:18px 20px;position:relative;overflow:hidden;transition:.2s}
+.aba-card:hover{border-color:var(--blue);background:#fff;box-shadow:0 4px 20px rgba(19,81,180,.08)}
+.aba-num{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;color:var(--blue);background:var(--blue-light);padding:2px 8px;border-radius:3px;display:inline-block;margin-bottom:10px}
+.aba-card h3{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:5px}
+.aba-card p{font-size:12px;color:var(--muted);line-height:1.55}
+
+/* ── CENÁRIOS ── */
+.cenarios-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:36px}
+.cenario-card{border-radius:10px;overflow:hidden;border:1px solid var(--border);transition:.2s}
+.cenario-card:hover{box-shadow:0 6px 28px rgba(7,29,65,.12);transform:translateY(-2px)}
+.cenario-header{padding:18px 20px 14px;color:#fff}
+.c0 .cenario-header{background:linear-gradient(135deg,#1351B4,#1E6FD9)}
+.c1 .cenario-header{background:linear-gradient(135deg,#071D41,#1351B4)}
+.c2 .cenario-header{background:linear-gradient(135deg,#0D4E16,#168821)}
+.cenario-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;opacity:.75;margin-bottom:6px}
+.cenario-header h3{font-size:16px;font-weight:700;margin-bottom:4px}
+.cenario-header p{font-size:12px;opacity:.75;line-height:1.4}
+.cenario-body{background:#fff;padding:14px 20px}
+.cenario-row{display:flex;justify-content:space-between;align-items:flex-start;padding:5px 0;border-bottom:1px solid #F0F4FA;font-size:12px}
+.cenario-row:last-child{border:none}
+.cenario-row span:first-child{color:var(--muted);font-weight:500}
+.cenario-row span:last-child{color:var(--navy);font-weight:600;text-align:right;max-width:55%}
+.canal-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}
+.verde{background:#168821}.amarelo{background:#FFBC00}.vermelho{background:#E52207}
+
+/* ── TRIBUTOS ── */
+.trib-section{background:var(--navy);color:#fff;padding:64px 24px}
+.trib-inner{max-width:900px;margin:0 auto}
+.trib-flow{display:flex;flex-direction:column;gap:0;margin-top:36px;max-width:600px}
+.trib-row{display:flex;align-items:stretch;gap:0}
+.trib-arrow{width:40px;display:flex;flex-direction:column;align-items:center}
+.trib-arrow-line{width:2px;background:rgba(255,255,255,.15);flex:1;margin:0 auto}
+.trib-arrow-head{color:rgba(255,255,255,.3);font-size:10px;line-height:1}
+.trib-item{flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:12px 16px;margin:3px 0;display:flex;justify-content:space-between;align-items:center;transition:.2s}
+.trib-item:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.15)}
+.trib-item-left strong{font-size:14px;font-weight:700;color:var(--yellow)}
+.trib-item-left span{font-size:11px;color:rgba(255,255,255,.55);display:block;margin-top:1px}
+.trib-aliq{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:500;color:rgba(255,255,255,.8);background:rgba(255,255,255,.07);padding:4px 10px;border-radius:4px}
+.trib-note{margin-top:20px;font-size:12px;color:rgba(255,255,255,.45);line-height:1.6;max-width:560px}
+
+/* ── ACESSO ── */
+.acesso-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:36px}
+.acesso-card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:22px 24px}
+.acesso-card .icon{font-size:28px;margin-bottom:12px}
+.acesso-card h3{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:6px}
+.acesso-card p{font-size:13px;color:var(--muted);line-height:1.6}
+.acesso-card ul{margin-top:10px;padding-left:16px;font-size:13px;color:var(--muted);line-height:2}
+.acesso-card ul li::marker{color:var(--blue)}
+
+/* ── CTA FINAL ── */
+.cta-section{background:linear-gradient(135deg,var(--blue) 0%,#0D3270 100%);padding:72px 24px;text-align:center;color:#fff}
+.cta-section h2{font-size:clamp(22px,3vw,36px);font-weight:800;margin-bottom:10px;letter-spacing:-.3px}
+.cta-section p{font-size:15px;opacity:.75;margin-bottom:32px;max-width:480px;margin-left:auto;margin-right:auto}
+
+/* ── FOOTER ── */
+footer{background:var(--navy);color:rgba(255,255,255,.5);font-size:12px;padding:24px;text-align:center;line-height:2}
+footer strong{color:rgba(255,255,255,.8)}
+footer a{color:rgba(255,255,255,.6);text-decoration:none}
+footer a:hover{color:#fff}
+
+/* ── RESPONSIVE ── */
+@media(max-width:640px){
+  .stats-inner{grid-template-columns:1fr 1fr}
+  .acesso-grid{grid-template-columns:1fr}
+  .hero h1{font-size:28px}
+  .btn-hero{padding:11px 20px;font-size:14px}
+  nav .nav-brand span{display:none}
+}
+@media(max-width:400px){
+  .stats-inner{grid-template-columns:1fr 1fr}
+  .stat{padding:18px 12px}
+  .stat-num{font-size:24px}
+}
+
+/* ── SCROLL REVEAL ── */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .5s ease, transform .5s ease}
+.reveal.visible{opacity:1;transform:none}
+</style>
+</head>
+<body>
+
+<!-- GOV BARS -->
+<div class="gov-strip">
+  <svg width="20" height="20" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#fff"/><path d="M7 21l9-13 9 13H7z" fill="#009c3b"/><circle cx="16" cy="15.5" r="4.5" fill="#FFDF00"/><path d="M11.5 15.5h9" stroke="#009c3b" stroke-width="1.5"/></svg>
+  Governo Federal — República Federativa do Brasil &nbsp;|&nbsp; MDIC — Ministério do Desenvolvimento, Indústria, Comércio e Serviços
+</div>
+<div class="gov-bar">
+  <span>Secretaria de Comércio Exterior — SECEX &nbsp;|&nbsp; Receita Federal do Brasil — RFB</span>
+  <span class="env-pill">TREINAMENTO</span>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-brand" href="#">
+    <span class="mono">SISCOMEX</span>
+    <span>Simulador Didático &nbsp;·&nbsp; UFCAT</span>
+  </a>
+  <a class="nav-cta" href="simulador.html">Acessar o simulador →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5.5" stroke="currentColor"/><path d="M6 3v3l2 1" stroke="currentColor" stroke-linecap="round"/></svg>
+    Ferramenta pedagógica · Comércio Exterior · UFCAT
+  </div>
+  <h1>Aprenda na prática como funciona uma <em>importação real</em></h1>
+  <p class="hero-sub">Simulador completo de Declaração de Importação (DI) no SISCOMEX — do preenchimento dos dados até o cálculo de tributos em cascata.</p>
+  <div class="hero-actions">
+    <a href="simulador.html" class="btn-hero btn-hero-primary">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1l7 7-7 7M2 8h13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      Abrir o simulador
+    </a>
+    <a href="#cenarios" class="btn-hero btn-hero-secondary">Ver cenários disponíveis</a>
+  </div>
+  <div class="hero-badges">
+    <span class="hero-badge">🗂 <strong>7 abas</strong> da DI</span>
+    <span class="hero-badge">📦 <strong>3 cenários</strong> pré-prontos</span>
+    <span class="hero-badge">🧮 <strong>5 tributos</strong> calculados</span>
+    <span class="hero-badge">🔒 <strong>Acesso</strong> controlado pelo professor</span>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stats-inner">
+    <div class="stat"><div class="stat-num">7</div><div class="stat-lbl">Abas da Declaração de Importação</div></div>
+    <div class="stat"><div class="stat-num">3</div><div class="stat-lbl">Cenários didáticos pré‑prontos</div></div>
+    <div class="stat"><div class="stat-num">5</div><div class="stat-lbl">Tributos calculados em cascata</div></div>
+    <div class="stat"><div class="stat-num">4</div><div class="stat-lbl">Canais de parametrização RFB</div></div>
+  </div>
+</div>
+
+<!-- ABAS -->
+<section style="background:var(--gray)">
+  <div class="section-inner reveal">
+    <div class="eyebrow">Estrutura da DI</div>
+    <h2 class="section-title">7 etapas do fluxo real de importação</h2>
+    <p class="section-sub">Cada aba replica uma seção da Declaração de Importação do SISCOMEX. Não é possível avançar sem preencher os campos obrigatórios.</p>
+    <div class="abas-grid">
+      <div class="aba-card"><span class="aba-num">ABA 01</span><h3>Importador</h3><p>CNPJ, habilitação RADAR, regime tributário, tipo de DI e canal de parametrização (Verde/Amarelo/Vermelho/Cinza).</p></div>
+      <div class="aba-card"><span class="aba-num">ABA 02</span><h3>Exportador</h3><p>Identificação do fornecedor estrangeiro, NIF, país de origem × procedência, Incoterm e documentação comercial (Invoice, Packing List, LI).</p></div>
+      <div class="aba-card"><span class="aba-num">ABA 03</span><h3>Mercadoria / NCM</h3><p>Adição de produtos com NCM de 8 dígitos, descrição técnica, anuência de órgãos (ANVISA, MAPA, INMETRO) e tabela de adições.</p></div>
+      <div class="aba-card"><span class="aba-num">ABA 04</span><h3>Transporte</h3><p>Modal (marítimo, aéreo, rodoviário), porto/aeroporto de entrada, Conhecimento de Carga (BL/AWB), CE Mercante e recinto aduaneiro.</p></div>
+      <div class="aba-card"><span class="aba-num">ABA 05</span><h3>Câmbio</h3><p>Taxa PTAX (BACEN), contrato de câmbio (SISBACEN), composição do Valor Aduaneiro CIF, AFRMM e outras despesas aduaneiras.</p></div>
+      <div class="aba-card"><span class="aba-num">ABA 06</span><h3>Tributos</h3><p>Cálculo em cascata de II, IPI, PIS, COFINS e ICMS (por dentro). Alíquotas ajustáveis. Percentual de carga tributária sobre o CIF.</p></div>
+      <div class="aba-card"><span class="aba-num">ABA 07</span><h3>Registro da DI</h3><p>Resumo consolidado, checklist documental, canal final, data/hora de registro e emissão do número da DI.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- CENÁRIOS -->
+<section id="cenarios">
+  <div class="section-inner reveal">
+    <div class="eyebrow">Cenários didáticos</div>
+    <h2 class="section-title">3 casos reais — do básico ao avançado</h2>
+    <p class="section-sub">Cada cenário é liberado pelo professor no momento certo da aula. Os alunos não podem carregar cenários bloqueados.</p>
+    <div class="cenarios-grid">
+
+      <div class="cenario-card c0">
+        <div class="cenario-header">
+          <div class="cenario-tag">📦 Nível básico</div>
+          <h3>Suplementos Alimentares</h3>
+          <p>EUA → Porto de Santos · Simples Nacional</p>
+        </div>
+        <div class="cenario-body">
+          <div class="cenario-row"><span>Produto</span><span>Whey Protein 80% (NCM 2106.90.10)</span></div>
+          <div class="cenario-row"><span>Volume</span><span>500 kg · USD 8,50/kg</span></div>
+          <div class="cenario-row"><span>Modal</span><span>Marítimo — MSC ADRIANA</span></div>
+          <div class="cenario-row"><span>PTAX</span><span>R$ 5,25</span></div>
+          <div class="cenario-row"><span>II · ICMS</span><span>10% · 12%</span></div>
+          <div class="cenario-row"><span>Canal</span><span><span class="canal-dot verde"></span>Verde</span></div>
+          <div class="cenario-row"><span>Foco didático</span><span>Fluxo básico completo</span></div>
+        </div>
+      </div>
+
+      <div class="cenario-card c1">
+        <div class="cenario-header">
+          <div class="cenario-tag">⚙️ Nível intermediário</div>
+          <h3>Equipamentos Industriais</h3>
+          <p>Alemanha → Porto de Paranaguá · Lucro Real</p>
+        </div>
+        <div class="cenario-body">
+          <div class="cenario-row"><span>Produtos</span><span>2 adições (NCM 8483 + 8501)</span></div>
+          <div class="cenario-row"><span>Regime</span><span>Drawback suspensão</span></div>
+          <div class="cenario-row"><span>Modal</span><span>Marítimo — EVER GIVEN II</span></div>
+          <div class="cenario-row"><span>PTAX</span><span>R$ 5,72 (EUR)</span></div>
+          <div class="cenario-row"><span>II · IPI</span><span>14% · 5%</span></div>
+          <div class="cenario-row"><span>Canal</span><span><span class="canal-dot amarelo"></span>Amarelo</span></div>
+          <div class="cenario-row"><span>Foco didático</span><span>Drawback · LI INMETRO</span></div>
+        </div>
+      </div>
+
+      <div class="cenario-card c2">
+        <div class="cenario-header">
+          <div class="cenario-tag">🏭 Nível avançado</div>
+          <h3>API Farmacêutico</h3>
+          <p>China → Porto de Itajaí · Lucro Real</p>
+        </div>
+        <div class="cenario-body">
+          <div class="cenario-row"><span>Produtos</span><span>3 adições (Amoxicilina, Eritro, Metro)</span></div>
+          <div class="cenario-row"><span>Regime</span><span>SGP — preferência tarifária</span></div>
+          <div class="cenario-row"><span>Modal</span><span>Marítimo — COSCO STAR</span></div>
+          <div class="cenario-row"><span>PTAX</span><span>R$ 5,18</span></div>
+          <div class="cenario-row"><span>II</span><span>0% (SGP)</span></div>
+          <div class="cenario-row"><span>Canal</span><span><span class="canal-dot vermelho"></span>Vermelho</span></div>
+          <div class="cenario-row"><span>Foco didático</span><span>LI ANVISA · alto risco regulatório</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- TRIBUTOS -->
+<div class="trib-section">
+  <div class="trib-inner reveal">
+    <div class="eyebrow" style="color:var(--yellow)">Tributação</div>
+    <h2 class="section-title" style="color:#fff">Cálculo em cascata — do II ao ICMS</h2>
+    <p class="section-sub" style="color:rgba(255,255,255,.6)">Cada tributo inclui os anteriores na base de cálculo. O simulador atualiza os valores em tempo real conforme o aluno ajusta as alíquotas.</p>
+    <div class="trib-flow">
+      <div class="trib-row">
+        <div class="trib-arrow"><div class="trib-arrow-line" style="visibility:hidden"></div></div>
+        <div class="trib-item"><div class="trib-item-left"><strong>Valor Aduaneiro (CIF)</strong><span>Mercadoria + Frete + Seguro × PTAX</span></div><div class="trib-aliq">Base</div></div>
+      </div>
+      <div class="trib-row">
+        <div class="trib-arrow"><div class="trib-arrow-line"></div><div class="trib-arrow-head">▼</div></div>
+        <div class="trib-item"><div class="trib-item-left"><strong>II — Imposto de Importação</strong><span>TEC — MDIC / NCM</span></div><div class="trib-aliq">0–35%</div></div>
+      </div>
+      <div class="trib-row">
+        <div class="trib-arrow"><div class="trib-arrow-line"></div><div class="trib-arrow-head">▼</div></div>
+        <div class="trib-item"><div class="trib-item-left"><strong>IPI</strong><span>TIPI — Receita Federal · base: CIF + II</span></div><div class="trib-aliq">0–20%</div></div>
+      </div>
+      <div class="trib-row">
+        <div class="trib-arrow"><div class="trib-arrow-line"></div><div class="trib-arrow-head">▼</div></div>
+        <div class="trib-item"><div class="trib-item-left"><strong>PIS / Importação</strong><span>Lei 10.865/2004 · base: CIF + II + IPI</span></div><div class="trib-aliq">2,10%</div></div>
+      </div>
+      <div class="trib-row">
+        <div class="trib-arrow"><div class="trib-arrow-line"></div><div class="trib-arrow-head">▼</div></div>
+        <div class="trib-item"><div class="trib-item-left"><strong>COFINS / Importação</strong><span>Lei 10.865/2004 · base: CIF + II + IPI</span></div><div class="trib-aliq">9,65%</div></div>
+      </div>
+      <div class="trib-row">
+        <div class="trib-arrow"><div class="trib-arrow-line"></div><div class="trib-arrow-head">▼</div></div>
+        <div class="trib-item" style="border-color:rgba(255,188,0,.3);background:rgba(255,188,0,.05)"><div class="trib-item-left"><strong style="color:var(--yellow)">ICMS — "Por dentro"</strong><span>CONFAZ · cálculo sobre si mesmo</span></div><div class="trib-aliq" style="color:var(--yellow)">4–25%</div></div>
+      </div>
+    </div>
+    <p class="trib-note">⚠️ Alíquotas ilustrativas para fins didáticos. As alíquotas reais dependem da NCM específica, ex-tarifários vigentes, acordos bilaterais e estado de desembaraço. Consulte sempre a TEC e o regulamento do ICMS estadual.</p>
+  </div>
+</div>
+
+<!-- ACESSO -->
+<section style="background:var(--gray)">
+  <div class="section-inner reveal">
+    <div class="eyebrow">Como funciona o acesso</div>
+    <h2 class="section-title">Controle total para o professor</h2>
+    <p class="section-sub">O simulador tem um sistema de login simples por e-mail — sem senha. O professor gerencia tudo pelo painel integrado.</p>
+    <div class="acesso-grid">
+      <div class="acesso-card">
+        <div class="icon">👨‍🏫</div>
+        <h3>Para o professor</h3>
+        <ul>
+          <li>Login com e-mail de <strong>role: professor</strong></li>
+          <li>Painel ⚙ aparece no canto da tela</li>
+          <li>Adiciona/remove e-mails de alunos</li>
+          <li>Libera cenários individualmente ou todos de uma vez</li>
+          <li>Exporta e importa lista de alunos em CSV</li>
+          <li>Visualiza log de acessos da sessão</li>
+        </ul>
+      </div>
+      <div class="acesso-card">
+        <div class="icon">👩‍🎓</div>
+        <h3>Para o aluno</h3>
+        <ul>
+          <li>Digita o e-mail institucional</li>
+          <li>Acessa apenas se estiver na lista do professor</li>
+          <li>Cenários bloqueados até liberação em sala</li>
+          <li>Avanço entre abas bloqueado sem campos obrigatórios</li>
+          <li>Cálculo tributário em tempo real</li>
+          <li>Registro da DI com número gerado ao final</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<div class="cta-section reveal">
+  <h2>Pronto para a aula?</h2>
+  <p>O simulador abre diretamente no navegador — sem instalação, sem servidor, sem dependências externas.</p>
+  <a href="simulador.html" class="btn-hero btn-hero-primary" style="display:inline-flex">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1l7 7-7 7M2 8h13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    Abrir o simulador agora
+  </a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <strong>SISCOMEX — Simulador Didático de Treinamento</strong><br/>
+  Desenvolvido por <strong>WB Consultoria Empresarial</strong> — Wildson Brandão &nbsp;·&nbsp;
+  <strong>UFCAT</strong> — Universidade Federal de Catalão &nbsp;·&nbsp;
+  Disciplina: Comércio Exterior — Administração<br/>
+  <span style="opacity:.5">Sem validade fiscal ou jurídica &nbsp;·&nbsp; Licença MIT</span>
+</footer>
+
+<script>
+// Scroll reveal
+var observer = new IntersectionObserver(function(entries){
+  entries.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('visible'); });
+}, {threshold:0.1});
+document.querySelectorAll('.reveal').forEach(function(el){ observer.observe(el); });
+</script>
+</body>
+</html>
