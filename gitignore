@@ -1,12 +1,1 @@
-# Sistema
-.DS_Store
-Thumbs.db
-*.log
 
-# IDEs
-.vscode/
-.idea/
-
-# Temporários
-*.tmp
-*.bak
